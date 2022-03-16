@@ -5,4 +5,4 @@ No secrecy, no bluffing, all the cards are on the table.
 
 Mika is my infant son. He probably wouldn't condone gambling.
 
-Aces are high (for now)...
+Aces are wild - of course!
