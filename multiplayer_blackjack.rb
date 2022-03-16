@@ -1,4 +1,28 @@
-def move
+@cards = [
+    "two of hearts", "three of hearts", "four of hearts", 
+    "five of hearts", "six of hearts", "seven of hearts",
+    "eight of hearts", "nine of hearts", "ten of hearts",
+    "jack of hearts", "queen of hearts", 
+    "king of hearts", "ace of hearts",
+    "two of clubs", "three of clubs", "four of clubs",
+    "five of clubs", "six of clubs", "seven of clubs",
+    "eight of clubs", "nine of clubs", "ten of clubs",
+    "jack of clubs", "queen of clubs",
+    "king of clubs", "ace of clubs",
+    "two of spades", "three of spades", "four of spades", 
+    "five of spades", "six of spades", "seven of spades",
+    "eight of spades", "nine of spades", "ten of spades",
+    "jack of spades", "queen of spades", 
+    "king of spades", "ace of spades",
+    "two of diamonds", "three of diamonds", "four of diamonds", 
+    "five of diamonds", "six of diamonds", "seven of diamonds",
+    "eight of diamonds", "nine of diamonds", "ten of diamonds",
+    "jack of diamonds", "queen of diamonds", 
+    "king of diamonds", "ace of diamonds"
+  ]
+  @game_count = 0 
+
+  def move
   loop do
     ans = gets.chomp
     if ans == "hit" || ans == "h" || ans == "Hit" || ans == "HIT"
@@ -78,12 +102,18 @@ def welcome
     "If you want one player blackjack quit now (control + c), and try our solo Blackjack table.\n\n\n",  
     "You can use the shortcut [h] for 'hit' and the shortcut [s] for 'stick'.",
     "Control + c at any time to quit.", "Make sure you do quit when you're done, otherwise the computer will be stuck in an infinite loop.",
-      "Infinite loop = tired (and warm) computer\n\n\n\n",
+    "Infinite loop = tired (and warm) computer\n\n\n\n",
     ]
-    message.each do |sentence|
-      puts sentence
+    if @game_count == 0
+      message.each do |sentence|
+        puts sentence
+        sleep(1.5)
+      end
+    else
+      puts "Great, let's play again!\n\n" if @game_count > 0
       sleep(1.5)
     end
+    @game_count += 1
 end
 
 def close
@@ -388,28 +418,6 @@ def run_game
   @in_play = []
   @final = []
   @busted = []
-  @cards = [
-    "two of hearts", "three of hearts", "four of hearts", 
-    "five of hearts", "six of hearts", "seven of hearts",
-    "eight of hearts", "nine of hearts", "ten of hearts",
-    "jack of hearts", "queen of hearts", 
-    "king of hearts", "ace of hearts",
-    "two of clubs", "three of clubs", "four of clubs",
-    "five of clubs", "six of clubs", "seven of clubs",
-    "eight of clubs", "nine of clubs", "ten of clubs",
-    "jack of clubs", "queen of clubs",
-    "king of clubs", "ace of clubs",
-    "two of spades", "three of spades", "four of spades", 
-    "five of spades", "six of spades", "seven of spades",
-    "eight of spades", "nine of spades", "ten of spades",
-    "jack of spades", "queen of spades", 
-    "king of spades", "ace of spades",
-    "two of diamonds", "three of diamonds", "four of diamonds", 
-    "five of diamonds", "six of diamonds", "seven of diamonds",
-    "eight of diamonds", "nine of diamonds", "ten of diamonds",
-    "jack of diamonds", "queen of diamonds", 
-    "king of diamonds", "ace of diamonds"
-  ]
   @ran_cards = @cards.shuffle
   @places = {
     '16, 4 cards' => [], '16, 3 cards' => [], '16, 2 cards' => [], 
@@ -421,7 +429,7 @@ def run_game
     '5 cards' => [], '6 cards' => [], '7 cards' => [], '8 cards' => [], 
     '9 cards' => [], '10 cards' => [], '11 cards' => [],
   }
-
+  welcome
   make_players
   deal
   turns
@@ -429,7 +437,6 @@ def run_game
   close
 end
 
-welcome
 loop do
   run_game
 end
