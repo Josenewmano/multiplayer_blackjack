@@ -123,7 +123,7 @@ end
 def deal
   @in_play.each do |a|
     sleep(1.5)
-    a.push("ace of spades").push("eight of hearts")
+    a.push(@ran_cards.pop).push(@ran_cards.pop)
     puts "\n#{a[0]} was dealt the #{a[1]} and the #{a[2]}. Their score so far is #{score(a)}.\n\n"
     puts "#{a[0]} could of course think of their score as #{score(a)-10} if they prefer, as they have an ace to play with.\n\n" if @ace_count > 0
     @ace_count -= @ace_count
