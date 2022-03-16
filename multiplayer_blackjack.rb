@@ -14,6 +14,7 @@ end
 
 def score(hand)
   points = 0
+  @ace_count = 0
   numbers = { 
   "two of hearts" => 2, "three of hearts" => 3, "four of hearts" => 4, 
   "five of hearts" => 5, "six of hearts" => 6, "seven of hearts" => 7,
@@ -39,9 +40,27 @@ def score(hand)
   
   hand.drop(1).each do |one_card|
     points += numbers[one_card]
+    if numbers[one_card] == 11
+      @ace_count += 1
+    end
   end
- 
+  
+  if @ace_count == 4 && points > 51
+    points -= 40
+    @ace_count -= 4
+  elsif @ace_count == 4 || (@ace_count == 3 && points > 41)
+    points -= 30
+    @ace_count -= 3
+  elsif @ace_count == 3 || (@ace_count == 2 && points > 31)
+    points -= 20
+    @ace_count -= 2
+  elsif @ace_count == 2 || (@ace_count == 1 && points > 21)
+    points -= 10
+    @ace_count -= 1
+  end
+
   return points
+
 end
 
 def number?(obj)
@@ -51,7 +70,7 @@ end
 
 def welcome
   message = [
-    "\nWelcome to Mika's Casino BlackJack Table.", "Aces are always high.", "Five cards in your (virtual) hand trumps 21.", 
+    "\nWelcome to Mika's Casino BlackJack Table.", "Aces are wild of course - why wouldn't they be?", "Five cards in your (virtual) hand trumps 21.", 
     "And six cards in your hand is better than five et cetera, et cetera.", "Feeling lucky?\n\n", "How close can you get to 21?", "Can you get to five cards?", 
     "To start, you want to get as close to 21 in as few cards as possible.", "But if you get to four cards, you might try to hold on for five.", "Weird, right?",
     "Over 16 with the best hand could squeeze out a win, but we all know what we're playing for here.\n\n", 
@@ -96,40 +115,20 @@ index = 0
     name = gets.chomp.capitalize
     sleep(0.5)
     @in_play << Array.new(1, name)
-  index += 1
+    index += 1
   end
   puts "\n\n\n"
 end
 
 def deal
-  loop do
-    @in_play.each do |a|
-      sleep(1.5)
-      a.push(@ran_cards.pop).push(@ran_cards.pop)
-      if score(a) == 22
-        @busted.push(a[0])
-        puts "\n#{a[0]} was dealt the #{a[1]} and the #{a[2]}. Their score so far is #{score(a)}.\n\n"
-        sleep(1)
-        puts "How unlucky #{a[0]} - two aces and you lose?!?! The developers are working on this issue."
-        sleep(2)
-        puts "But you still lose, #{a[0]}. Sorry about that."
-      else
-        puts "\n#{a[0]} was dealt the #{a[1]} and the #{a[2]}. Their score so far is #{score(a)}.\n\n"
-      end
-    end
-    puts "\n\n"
-    if @busted.size > 0
-      sleep(3)
-      puts "That wasn't actually really fair on #{@busted.join(" and ")} was it? We'll have to deal again. Sorry to tease you all!"
-      @busted.clear
-      @in_play.each do |a|
-        a.pop
-        a.pop
-      end
-    else
-      break
-    end
+  @in_play.each do |a|
+    sleep(1.5)
+    a.push("ace of spades").push("eight of hearts")
+    puts "\n#{a[0]} was dealt the #{a[1]} and the #{a[2]}. Their score so far is #{score(a)}.\n\n"
+    puts "#{a[0]} could of course think of their score as #{score(a)-10} if they prefer, as they have an ace to play with.\n\n" if @ace_count > 0
+    @ace_count -= @ace_count
   end
+  puts "\n\n"
 end
 
 def turns
@@ -140,10 +139,10 @@ def turns
   while @in_play.size > 0 do
     loop do
       break if @in_play.size == 0
-      if score(@in_play[@i]) > 19
-        puts "#{@in_play[@i][0]}, your score is #{score(@in_play[@i])} so any card will make you bust. You'll have to stop there.\n\n"
+      if score(@in_play[@i]) > 20 && @ace_count == 0
+        puts "#{@in_play[@i][0]},  got 21 from 2 cards, so they've probably won. They can only be beaten by a trick hand. They'll have to stop there anyway.\n\n"
         add_final(@in_play[@i])
-        index_looper
+        next_player
       else
         break
       end
@@ -151,8 +150,10 @@ def turns
 
     if @in_play.size == 1
       puts "#{@in_play[@i][0]} is the last player in the game. #{score(@in_play[@i])} so far, from #{@in_play[@i].size - 1} cards. Hit or stick?"
+      puts "Remember #{@in_play[@i][0]}, has an ace to play with, so their score could also be considered to be #{score(@in_play[@i]) - 10}." if @ace_count > 0
     elsif @in_play.size > 1
       puts "It's #{@in_play[@i][0]}'s turn. #{score(@in_play[@i])} so far, from #{@in_play[@i].size - 1} cards. Hit or stick?"
+      puts "Remember #{@in_play[@i][0]}, has an ace to play with, so their score could also be considered to be #{score(@in_play[@i]) - 10}." if @ace_count > 0
     else 
       break
     end
@@ -164,30 +165,32 @@ def turns
       puts "\n#{@in_play[@i][0]} got the #{@in_play[@i][-1]}."
       if score(@in_play[@i]) > 21
         puts "Whoops, #{@in_play[@i][0]} busted with #{score(@in_play[@i])}.\n\n"
+        puts  "And before you ask #{@in_play[@i][0]}, you can't do any fiddling with aces.\n\n" if @ace_count > 0
         @busted.push(@in_play[@i][0])
         @in_play.delete_at(@i)
         @i -= 1
       elsif score(@in_play[@i]) == 21
-        puts "That's 21, #{@in_play[@i][0]} may well have won. Let's wait and see.\n\n"
-        add_final(@in_play[@i])
-      elsif score(@in_play[@i]) == 20
-        puts "That's 20, #{@in_play[@i][0]}. You have to stick now as another card will make you bust.\n\n"
-        add_final(@in_play[@i])
+        puts "That's 21, #{@in_play[@i][0]} may well have won. It's looking good!\n\n"
+        @ace_count > 0 ? "Because you have aces to play with #{@in_play[@i][0]}, you can have another turn in a moment, in case you're feeling courageous (i.e. crazy).\n\n" : add_final(@in_play[@i])
       else
-        puts "#{@in_play[@i][0]}'s score so far is #{score(@in_play[@i])}\n\n"
+        puts "#{@in_play[@i][0]}'s score so far is #{score(@in_play[@i])}, from #{@in_play[@i].size - 1} cards.\n\n"
+        puts "You could of course think of your score as #{score(@in_play[@i])}, #{@in_play[@i][0]}, as you have an ace still to play with.\n\n" if @ace_count > 0
       end
     else
       if @in_play[@i].size > 5
         puts "#{@in_play[@i][0]} has a #{@in_play[@i].size - 1} card trick. Looking pretty good for the win.\n\n"
+        puts "You could even have held on a little longer, #{@in_play[@i][0]}, as you had an ace still to play with. What could have been!\n\n" if @ace_count > 0
         add_final(@in_play[@i])
       elsif score(@in_play[@i]) < 16
         puts "#{score(@in_play[@i])} isn't enough #{@in_play[@i][0]}, you can't win. You can have another chance to be brave on your next go."
+        puts "And you could even think of your score as #{score(@in_play[@i])}, #{@in_play[@i][0]}, as you have an ace still to play with. Show some mettle!\n\n" if @ace_count > 0
       else
         puts "#{@in_play[@i][0]}'s final score is #{score(@in_play[@i])} from #{@in_play[@i].size - 1} cards. We'll see if that's enough in a moment.\n\n"
+        puts "Will you regret not sticking with it #{@in_play[@i][0]}? You still had an ace to play with. We shall see...\n\n" if @ace_count > 0
         add_final(@in_play[@i])
       end
     end
-    index_looper
+    next_player
   end
   @places_index = @final.size
 end
@@ -198,7 +201,8 @@ def add_final(player)
   @i -= 1
 end
 
-def index_looper
+def next_player
+  @ace_count -= @ace_count
   @i += 1
   if @i > (@in_play.size - 1)
     @i -= @i
