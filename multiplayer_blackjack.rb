@@ -110,7 +110,7 @@ def deal
         @busted.push(a[0])
         puts "\n#{a[0]} was dealt the #{a[1]} and the #{a[2]}. Their score so far is #{score(a)}.\n\n"
         sleep(1)
-        puts "How unlucky #{a[0]} - two aces and you lose. The developers are working on this issue."
+        puts "How unlucky #{a[0]} - two aces and you lose?!?! The developers are working on this issue."
         sleep(2)
         puts "But you still lose, #{a[0]}. Sorry about that."
       else
@@ -119,9 +119,9 @@ def deal
     end
     puts "\n\n"
     if @busted.size > 0
-      @busted.clear
       sleep(3)
-      puts "That wasn't actually really fair was it? We'll have to deal again. Sorry to tease you all!"
+      puts "That wasn't actually really fair on #{@busted.join(" and ")} was it? We'll have to deal again. Sorry to tease you all!"
+      @busted.clear
       @in_play.each do |a|
         a.pop
         a.pop
