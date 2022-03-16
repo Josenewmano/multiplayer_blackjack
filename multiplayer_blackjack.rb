@@ -359,7 +359,7 @@ def positions_message
     if array.size > 0
       @places_index -= (array.size - 1)
       if @places_index == 1
-        puts "Some might say that all the placeings we've mentioned so far were meaningless. Not us though..."
+        puts "Some might say that all the placings we've mentioned so far were meaningless. Not us though..."
         sleep(3)
         puts "And the moment that we've all been waiting for.."
         sleep(3)
@@ -422,7 +422,6 @@ def run_game
     '9 cards' => [], '10 cards' => [], '11 cards' => [],
   }
 
-  welcome
   make_players
   deal
   turns
@@ -430,6 +429,7 @@ def run_game
   close
 end
 
+welcome
 loop do
   run_game
 end
