@@ -212,7 +212,19 @@ end
 def final_scores_to_places_hash
   while @final.size > 0 do
     @final.each do |fin|
-      if fin.size == 9
+      if fin.size == 12
+        @places['11 cards'].push(fin[0])
+        @final.delete(fin)
+        next
+      elsif fin.size == 11
+        @places['10 cards'].push(fin[0])
+        @final.delete(fin)
+        next
+      elsif fin.size == 10
+        @places['9 cards'].push(fin[0])
+        @final.delete(fin)
+        next
+      elsif fin.size == 9
         @places['8 cards'].push(fin[0])
         @final.delete(fin)
         next
@@ -347,7 +359,7 @@ def positions_message
     if array.size > 0
       @places_index -= (array.size - 1)
       if @places_index == 1
-        puts "Some might say that everybody that we've heard about so far is a loser. Not us though..."
+        puts "Some might say that all the placeings we've mentioned so far were meaningless. Not us though..."
         sleep(3)
         puts "And the moment that we've all been waiting for.."
         sleep(3)
@@ -407,6 +419,7 @@ def run_game
     '20, 4 cards' => [], '20, 3 cards' => [], '20, 2 cards' => [],
     '21, 4 cards' => [], '21, 3 cards' => [], '21, 2 cards' => [], 
     '5 cards' => [], '6 cards' => [], '7 cards' => [], '8 cards' => [], 
+    '9 cards' => [], '10 cards' => [], '11 cards' => [],
   }
 
   welcome
